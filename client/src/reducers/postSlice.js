@@ -1,18 +1,30 @@
 import {createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import * as api from "../api/index";
+import {fetchPosts, url} from '../api'
 
-const initialState = []
+const initialState = {
+    posts: [
+        1,
+        2,
+        3,
+    ]
+}
 
 // fetchAllPosts: (state, {payload}) => {
 //     return state;
 // },
-export const createPostAsync = createAsyncThunk('posts/createPostAsync', async (postData, thunkAPI) => {
-    const response = await apiCall(postData);
-    return response.data;
-})
+// export const createPostAsync = createAsyncThunk('posts/createPostAsync', async (postData, thunkAPI) => {
+//     const response = await apiCall(postData);
+//     return response.data;
+// })
+//
+export const fetchAllPostsAsync = createAsyncThunk('posts/fetchAllPostsAsync', async () => {
+    // // const response = await apiCallToFetchPosts();
+    // const response = await fetchPosts();
+    // return response.data;
 
-export const fetchAllPostsAsync = createAsyncThunk('posts/fetchAllPostsAsync', async (_, thunkAPI) => {
-    const response = await apiCallToFetchPosts();
-    return response.data;
+    const data = await api.fetchPosts();
+    return data;
 })
 
 
@@ -42,9 +54,23 @@ const postSlice = createSlice({
                 post.likes += 1;
             }
         }
+    },
+    extraReducers: {
+        [fetchAllPostsAsync.pending]: () => {
+            console.log("Pending");
+        },
 
+        [fetchAllPostsAsync.fulfilled]: (state, {payload}) => {
+            console.log("Posts fetched successfully!");
+            return {...state, posts: payload}
+        },
+
+        [fetchAllPostsAsync.rejected]: () => {
+            console.log("Rejected!");
+        }
 
     }
 });
 
+export const { createPost, updatePost, deletePost, likePost } = postSlice.actions
 export default postSlice.reducer;
