@@ -2,7 +2,8 @@ import React from "react";
 import useStyles from "../../styles";
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import { useState } from "react";
-import FileBase64 from "react-file-base64/src/js/components/react-file-base64";
+// import FileBase64 from "react-file-base64/src/js/components/react-file-base64";
+import FileInput from "../ReactDropzone/FileInput";
 
 const Form = () => {
     const [postData, setPostData] = useState({
@@ -14,6 +15,10 @@ const Form = () => {
     })
 
     const classes = useStyles();
+
+    const handleFileSelect = (base64) => {
+        setPostData({ ...postData, selectedFile: base64 });
+    };
     const handleSubmit = () => {
 
     }
@@ -61,11 +66,15 @@ const Form = () => {
                     onChange={(e) => setPostData({ ...postData, tags: e.target.value })}
                 />
                 <div className={classes.fileInput}>
-                    <FileBase64
-                        type="file"
-                        multiple={false}
-                        onDone={({base64}) => setPostData({...postData, selectedFile: base64 })}
-                    />
+                    {/*NO LONGER WORKS WITH REACT!*/}
+                    {/*<FileBase64*/}
+                    {/*    type="file"*/}
+                    {/*    multiple={false}*/}
+                    {/*    onDone={({base64}) => setPostData({...postData, selectedFile: base64 })}*/}
+                    {/*/>*/}
+
+                    <FileInput onFileSelect={handleFileSelect} />
+
                 </div>
                 <Button
                     className={classes.buttonSubmit}
@@ -78,6 +87,7 @@ const Form = () => {
                     Submit
                 </Button>
                 <Button
+                    className={classes.buttonSubmit}
                     variant="contained"
                     color="secondary"
                     size="small"
