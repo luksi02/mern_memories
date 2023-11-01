@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as api from "../api/index";
 import {fetchPosts, url} from '../api'
+import axios from 'axios';
 
 const initialState = {
     posts: [
@@ -35,6 +36,15 @@ const postSlice = createSlice({
     reducers: {
         createPost: (state, action) => {
             state.posts.push(action.payload);
+
+            // Send a POST request to your server to save post
+            axios.post('/api/posts', action.payload)
+                .then((response) => {
+                    console.log('Post saved', response.data)
+                })
+                .catch((error) => {
+                    console.log("Error: ", error)
+                })
         },
         updatePost: (state, action) => {
             const { id, updatedPost} = action.payload;

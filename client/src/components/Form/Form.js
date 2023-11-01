@@ -4,8 +4,11 @@ import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import { useState } from "react";
 // import FileBase64 from "react-file-base64/src/js/components/react-file-base64";
 import FileInput from "../ReactDropzone/FileInput";
+import {useDispatch} from "react-redux";
+import {createPost} from "../../reducers/postSlice";
 
 const Form = () => {
+    const dispatch = useDispatch();
     const [postData, setPostData] = useState({
         creator: '',
         title: '',
@@ -19,8 +22,10 @@ const Form = () => {
     const handleFileSelect = (base64) => {
         setPostData({ ...postData, selectedFile: base64 });
     };
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
+        dispatch(createPost(postData))
     }
 
     const clear = () => {
@@ -44,7 +49,7 @@ const Form = () => {
                 <TextField
                     name="Title"
                     variant="outlined"
-                    label="Creator"
+                    label="Title"
                     fullWidth
                     value={postData.title}
                     onChange={(e) => setPostData({ ...postData, title: e.target.value })}
@@ -52,7 +57,7 @@ const Form = () => {
                 <TextField
                     name="Message"
                     variant="outlined"
-                    label="Creator"
+                    label="Message"
                     fullWidth
                     value={postData.message}
                     onChange={(e) => setPostData({ ...postData, message: e.target.value })}
@@ -60,7 +65,7 @@ const Form = () => {
                 <TextField
                     name="tags"
                     variant="outlined"
-                    label="Creator"
+                    label="Tags"
                     fullWidth
                     value={postData.tags}
                     onChange={(e) => setPostData({ ...postData, tags: e.target.value })}
