@@ -5,7 +5,8 @@ import { useState } from "react";
 // import FileBase64 from "react-file-base64/src/js/components/react-file-base64";
 import FileInput from "../ReactDropzone/FileInput";
 import {useDispatch} from "react-redux";
-import {createPost} from "../../reducers/postSlice";
+// import {createPost} from "../../reducers/postSlice";
+import {createPostAsync} from "../../reducers/postSlice";
 
 const Form = () => {
     const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const Form = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        dispatch(createPost(postData))
+        dispatch(createPostAsync(postData))
     }
 
     const clear = () => {
@@ -83,7 +84,7 @@ const Form = () => {
                 </div>
                 <Button
                     className={classes.buttonSubmit}
-                    variant="container"
+                    variant="contained"
                     color="primary"
                     size="large"
                     type="submit"
@@ -96,6 +97,7 @@ const Form = () => {
                     variant="contained"
                     color="secondary"
                     size="small"
+                    fullWidth
                     onClick={clear}
                 >
                     Clear

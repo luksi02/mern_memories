@@ -4,11 +4,7 @@ import {fetchPosts, url} from '../api'
 import axios from 'axios';
 
 const initialState = {
-    posts: [
-        1,
-        2,
-        3,
-    ]
+    posts: []
 }
 
 // fetchAllPosts: (state, {payload}) => {
@@ -20,12 +16,23 @@ const initialState = {
 // })
 //
 export const fetchAllPostsAsync = createAsyncThunk('posts/fetchAllPostsAsync', async () => {
-    // // const response = await apiCallToFetchPosts();
-    // const response = await fetchPosts();
-    // return response.data;
+    // const response = await apiCallToFetchPosts();
+    const response = await fetchPosts();
+    console.log(response)
+    return response;
 
-    const data = await api.fetchPosts();
-    return data;
+    // const data = await api.fetchPosts();
+    // return data;
+})
+
+export const createPostAsync = createAsyncThunk('posts/createPost', async (postData) => {
+    try {
+        const response = await axios.post('/posts', postData);
+        console.log('Post saved?', response.data)
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 })
 
 
@@ -34,18 +41,19 @@ const postSlice = createSlice({
     name: "posts",
     initialState,
     reducers: {
-        createPost: (state, action) => {
-            state.posts.push(action.payload);
-
-            // Send a POST request to your server to save post
-            axios.post('/api/posts', action.payload)
-                .then((response) => {
-                    console.log('Post saved', response.data)
-                })
-                .catch((error) => {
-                    console.log("Error: ", error)
-                })
-        },
+        // NEW IDEA!
+        // createPost: (state, action) => {
+        //     state.posts.push(action.payload);
+        //
+        //     // Send a POST request to your server to save post
+        //     axios.post('/api/posts', action.payload)
+        //         .then((response) => {
+        //             console.log('Post saved', response.data)
+        //         })
+        //         .catch((error) => {
+        //             console.log("Error: ", error)
+        //         })
+        // },
         updatePost: (state, action) => {
             const { id, updatedPost} = action.payload;
             const postIndex = state.posts.findIndex(post => post.id === id);
@@ -65,19 +73,28 @@ const postSlice = createSlice({
             }
         }
     },
-    extraReducers: {
-        [fetchAllPostsAsync.pending]: () => {
-            console.log("Pending");
-        },
-
-        [fetchAllPostsAsync.fulfilled]: (state, {payload}) => {
-            console.log("Posts fetched successfully!");
-            return {...state, posts: payload}
-        },
-
-        [fetchAllPostsAsync.rejected]: () => {
-            console.log("Rejected!");
-        }
+    extraReducers: (builder) => {
+        builder.
+            addCase(createPostAsync.fulfilled, (state, action) => {
+                state.posts.push(action.payload);
+        })
+            .addCase(fetchAllPostsAsync.fulfilled, (state, {payload}) => {
+                    console.log("Posts fetched successfully!");
+                    return {...state, posts: payload}
+                });
+        //
+        // [fetchAllPostsAsync.pending]: () => {
+        //     console.log("Pending");
+        // },
+        //
+        // [fetchAllPostsAsync.fulfilled]: (state, {payload}) => {
+        //     console.log("Posts fetched successfully!");
+        //     return {...state, posts: payload}
+        // },
+        //
+        // [fetchAllPostsAsync.rejected]: () => {
+        //     console.log("Rejected!");
+        // }
 
     }
 });
