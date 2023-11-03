@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState } from 'react';
 import { Container, AppBar, Typography, Grow, Grid } from "@material-ui/core";
 
 import memories from './images/memories.png'
@@ -10,6 +10,7 @@ import {useDispatch, useSelector} from "react-redux";
 import { fetchAllPostsAsync, createPost, deletePost, likePost, updatePost } from "./reducers/postSlice"
 
 const App = () => {
+    const [currentId, setCurrentId] = useState(null);
     const classes = useStyles();
     const dispatch = useDispatch();
     const posts = useSelector((state) => state.posts.posts)
@@ -22,7 +23,7 @@ const App = () => {
 
 
     return (
-       <Container maxidth="lg">
+       <Container maxWidth="lg">
            <AppBar className={classes.appBar} position="static" color="inherit">
                <Typography variant="h2" align="center">
                    Memories
@@ -33,16 +34,18 @@ const App = () => {
                <Container>
                    <Grid container justifyContent="space-between" alignItems="stretch" spacing={4}>
                        <Grid item xs={12} sm={7}>
-                           <Posts />
+                           <Posts  setCurrentId={setCurrentId}/>
+
                            {/*{posts.map((post) => (*/}
                            {/*    <div key={post.id}>*/}
                            {/*        <h3>{post}</h3>*/}
                            {/*    </div>*/}
                            {/*))}*/}
+
                        </Grid>
 
                        <Grid item xs={12} sm={5}>
-                           <Form />
+                           <Form currentId={currentId} />
                        </Grid>
                    </Grid>
                </Container>

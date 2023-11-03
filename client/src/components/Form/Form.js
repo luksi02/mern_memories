@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import useStyles from "../../styles";
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import { useState } from "react";
@@ -6,9 +6,16 @@ import { useState } from "react";
 import FileInput from "../ReactDropzone/FileInput";
 import {useDispatch} from "react-redux";
 // import {createPost} from "../../reducers/postSlice";
-import {createPostAsync} from "../../reducers/postSlice";
+import {createPostAsync, updatePostAsync} from "../../reducers/postSlice";
+import { useSelector } from 'react-redux';
+import {updatePost} from "../../api";
 
-const Form = () => {
+
+const Form = ({ currentId, setCurrentId }) => {
+    const post = useSelector((state) => {
+        const posts = state.posts.posts; // Access the posts array
+        return currentId ? posts.find((post) => post._id === currentId) : null;
+    });
     const dispatch = useDispatch();
     const [postData, setPostData] = useState({
         creator: '',
@@ -17,27 +24,49 @@ const Form = () => {
         tags: '',
         selectedFile: ''
     })
-
     const classes = useStyles();
+
+    useEffect(() => {
+        if(post) {
+            setPostData(post)
+        }
+    }, [post]);
 
     const handleFileSelect = (base64) => {
         setPostData({ ...postData, selectedFile: base64 });
     };
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log('Submit button clicked');
 
-        dispatch(createPostAsync(postData))
+        if (currentId) {
+            console.log('Updating post');
+            // dispatch(updatePostAsync(currentId, postData));
+            dispatch(updatePostAsync({ id: currentId, ...postData }));
+            clear();
+        } else {
+            console.log('Creating post');
+            dispatch(createPostAsync(postData));
+            clear();
+        }
     }
 
     const clear = () => {
-
+        // setCurrentId(''); // Initialize with an empty string
+        setPostData({
+            creator: '',
+            title: '',
+            message: '',
+            tags: '',
+            selectedFile: ''
+        });
     }
 
     return (
         <Paper className={classes.paper}>
             <form autoComplete="off" noValidate className={classes.form} onSubmit={handleSubmit}>
                 <Typography variant="h6">
-                    Creating a Memory
+                    {currentId ? 'Editing' : 'Creating' } a Memory
                 </Typography>
                 <TextField
                     name="creator"

@@ -7,14 +7,26 @@ const initialState = {
     posts: []
 }
 
-// fetchAllPosts: (state, {payload}) => {
-//     return state;
-// },
-// export const createPostAsync = createAsyncThunk('posts/createPostAsync', async (postData, thunkAPI) => {
-//     const response = await apiCall(postData);
-//     return response.data;
-// })
-//
+export const updatePostAsync = createAsyncThunk('posts/updatePost', async (postData) => {
+    try {
+        const response = await api.updatePost(postData.id, postData); // Make sure you're passing the id as well
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+});
+
+export const deletePostAsync = createAsyncThunk('posts/deletePost', async (id) => {
+    try {
+        await api.deletePost(id); // Make sure you're passing the id as well
+        console.log('Post deleted!')
+        return id;
+
+    } catch (error) {
+        throw error;
+    }
+});
+
 export const fetchAllPostsAsync = createAsyncThunk('posts/fetchAllPostsAsync', async () => {
     // const response = await apiCallToFetchPosts();
     const response = await fetchPosts();
@@ -81,7 +93,27 @@ const postSlice = createSlice({
             .addCase(fetchAllPostsAsync.fulfilled, (state, {payload}) => {
                     console.log("Posts fetched successfully!");
                     return {...state, posts: payload}
-                });
+                })
+            .addCase(updatePostAsync.fulfilled, (state, action) => {
+                const updatedPost = action.payload;
+
+                const updatedPosts = [...state.posts];
+                const postIndex = updatedPosts.findIndex((post) => post._id === updatedPost._id);
+                if (postIndex !== -1) {
+                    updatedPosts[postIndex] = updatedPost;
+                }
+                state.posts = updatedPosts;
+                // const postIndex = state.posts.findIndex((post) => post._id === updatedPost._id);
+                //
+                // if (postIndex !== -1) {
+                //     state.posts[postIndex] = updatedPost;
+                // }
+            })
+            .addCase(deletePostAsync.fulfilled, (state, action) => {
+                const deletedPostId = action.payload;
+                state.posts = state.posts.filter((post) => post._id !== deletedPostId);
+            })
+
         //
         // [fetchAllPostsAsync.pending]: () => {
         //     console.log("Pending");
