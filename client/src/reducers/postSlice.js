@@ -16,6 +16,16 @@ export const updatePostAsync = createAsyncThunk('posts/updatePost', async (postD
     }
 });
 
+export const likePostAsync = createAsyncThunk('posts/likePost', async ({ postId, likeCount }) => {
+    try {
+        // Make an API call to update the likeCount on the server with the new value
+        await api.likePost(postId, likeCount);
+        return { postId, likeCount }; // Include the new likeCount in the payload
+    } catch (error) {
+        throw error;
+    }
+});
+
 export const deletePostAsync = createAsyncThunk('posts/deletePost', async (id) => {
     try {
         await api.deletePost(id); // Make sure you're passing the id as well
@@ -112,6 +122,15 @@ const postSlice = createSlice({
             .addCase(deletePostAsync.fulfilled, (state, action) => {
                 const deletedPostId = action.payload;
                 state.posts = state.posts.filter((post) => post._id !== deletedPostId);
+            })
+            .addCase(likePostAsync.fulfilled, (state, action) => {
+                const { postId, likeCount } = action.payload;
+
+                // Update the likeCount of the post in the state
+                const postToUpdate = state.posts.find((post) => post._id === postId);
+                if (postToUpdate) {
+                    postToUpdate.likeCount = likeCount;
+                }
             })
 
         //

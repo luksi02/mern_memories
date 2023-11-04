@@ -7,11 +7,14 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import moment from 'moment';
 import {Image} from "@material-ui/icons";
 import { useDispatch } from "react-redux";
-import { deletePostAsync } from "../../../reducers/postSlice";
+import {deletePostAsync, likePostAsync} from "../../../reducers/postSlice";
 
 const Post = ({ post, setCurrentId }) => {
     const dispatch = useDispatch();
     const classes = useStyles();
+    // Calculate the new likeCount (incremented by 1)
+    const newLikeCount = post.likeCount + 1;
+
 
     return (
         <Card className={classes.card} >
@@ -42,14 +45,14 @@ const Post = ({ post, setCurrentId }) => {
             <Typography className={classes.title} variant="h5" gutterBottom>{post.title}</Typography>
 
             <CardContent>
-                <Typography variant="h5" gutterBottom>{post.message}</Typography>
+                <Typography variant="body2" color='textSecondary' component="p">{post.message}</Typography>
             </CardContent>
 
             <CardActions className={classes.cardActions}>
-                <Button size="small" color="primary" onClick={() => {}}>
+                <Button size="small" color="primary" onClick={() => dispatch(likePostAsync({ postId: post._id, likeCount: newLikeCount }))}>
 
                     <ThumbUpAltIcon fontSize="small" />
-                    Like
+                    &nbsp; Like &nbsp;
                     {post.likeCount}
                 </Button>
 
