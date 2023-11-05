@@ -33,7 +33,7 @@ const startServer = async () => {
         // app.listen(8080, () => console.log("Server started on port http://localhost:8080"));
         // connectDB(MONGODB_URL);
         connectDB(process.env.MONGODB_CLUSTER_URL);
-        app.listen(5000, () => console.log("Server started on port http://localhost:5000"));
+        app.listen(8080, () => console.log("Server started on port http://localhost:8080"));
     } catch (error) {
         console.log("SERVER NOT STARTED", error)
         console.log(MONGODB_URL)
